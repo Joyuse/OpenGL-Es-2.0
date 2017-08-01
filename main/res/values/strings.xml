@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">NewOpenGLES</string>
+    <string-array name="screen_array">
+        <item>Choice City</item>
+        <item>Messages</item>
+        <item>Favorites</item>
+        <item>Interesting Places</item>
+        <item>Sign In</item>
+    </string-array>
+
+    <string-array name="another_screen_array">
+        <item>Settings</item>
+        <item>Commercial</item>
+        <item>Help</item>
+        <item>About Us</item>
+    </string-array>
 </resources>

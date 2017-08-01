@@ -42,7 +42,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //событие JOPA
+        //событие
         int action = event.getAction();
 
         if (action == MotionEvent.ACTION_DOWN) {
@@ -71,7 +71,6 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         return true;
     }
 
-    //DVIJUHA
     private boolean doMoveEvent(MotionEvent event)
     {
         final int action = event.getAction();
@@ -85,8 +84,10 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
 
-                    //renderer += dy;
+                    //renderer.angleX += dy;
                     //renderer.angleY += dx;
+
+
                     mLastTouchX = x;
                     mLastTouchY = y;
                 }
@@ -102,7 +103,6 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         return true;
     }
 
-    //POVOROTIKI PIDORMOTIKI
     private boolean doRotationEvent(MotionEvent event) {
         //расчитываем угол менжду двумя пальцами
         deltaX = event.getX(1) - event.getX(0);
