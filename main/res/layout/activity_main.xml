@@ -27,17 +27,19 @@
             android:layout_marginTop="10dp"
             android:background="@android:drawable/ic_delete" />
 
+        <!--
         <android.opengl.GLSurfaceView
             android:id="@+id/MyGLSurfaceViewID"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+            -->
 
-        <!--
+
         <com.example.vladimir.newopengles.OpenGLSurfaceView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/OpenGLSurfaceViewID"/>
-            -->
+
 
     </FrameLayout>
 

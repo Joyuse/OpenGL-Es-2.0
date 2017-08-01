@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private GLSurfaceView glSurfaceView;
-    OpenGLRenderer renderer;
+    OpenGLSurfaceView renderer;
     private ListView listView;
     //private String [] drawerItems;
     private MyAdapter myAdapter;
@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
         }
 
         setContentView(R.layout.activity_main);
-        glSurfaceView = findViewById(R.id.MyGLSurfaceViewID);
+        glSurfaceView = findViewById(R.id.OpenGLSurfaceViewID);
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(new OpenGLRenderer(this));
 
@@ -50,13 +50,6 @@ public class MainActivity extends Activity {
         //Кнопки
         Button ZoomIn = findViewById(R.id.ZoomIn);
         Button ZoomOut = findViewById(R.id.ZoomOut);
-
-        findViewById(R.id.ZoomIn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Button was clicked!", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -153,7 +146,6 @@ public class MainActivity extends Activity {
                             break;
                     }
                     Log.e("Event", "PointerCount = " +drawerItems[p]);
-                    //Toast.makeText(this,drawerItems[p]+ " was selected", Toast.LENGTH_SHORT).show();
                 }
             };
             row.setOnClickListener(makeListener);

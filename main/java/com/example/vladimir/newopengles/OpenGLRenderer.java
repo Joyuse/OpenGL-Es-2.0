@@ -1,6 +1,7 @@
 package com.example.vladimir.newopengles;
 
 import android.content.Context;
+import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
 import android.os.SystemClock;
@@ -37,24 +38,42 @@ import static android.opengl.GLES20.GL_DEPTH_TEST;
 import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glLineWidth;
 
-public class OpenGLRenderer implements Renderer {
+public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     private final static int POSITION_COUNT = 3;
+    private final static long TIME = 10000;
 
     private Context context;
 
-    private float eyeX;
-    private float eyeY;
+    // точка положения камеры
+    public float eyeX;
+    public float eyeY;
+    public float eyeZ;
 
+    // точка направления камеры
+    public float centerX;
+    public float centerY;
+    public float centerZ;
+
+    // up-вектор
+    public float upX;
+    public float upY;
+    public float upZ;
+
+    //Буферы
     private FloatBuffer vertexData;
     private int uColorLocation;
     private int aPositionLocation;
     private int uMatrixLocation;
     private int programId;
 
+    //Матрицы
     private float[] mProjectionMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
     private float[] mMatrix = new float[16];
+
+
+
 
     public OpenGLRenderer(Context context) {
         this.context = context;
@@ -68,7 +87,7 @@ public class OpenGLRenderer implements Renderer {
         int fragmentShaderId = ShaderUtils.createShader(context, GL_FRAGMENT_SHADER, R.raw.fragment_shader);
         programId = ShaderUtils.createProgram(vertexShaderId, fragmentShaderId);
         glUseProgram(programId);
-        createViewMatrix();
+        //createViewMatrix();
         prepareData();
         bindData();
     }
@@ -77,7 +96,7 @@ public class OpenGLRenderer implements Renderer {
     public void onSurfaceChanged(GL10 arg0, int width, int height) {
         glViewport(0, 0, width, height);
         createProjectionMatrix(width, height);
-        bindMatrix();
+        //bindMatrix();
     }
 
     private void prepareData() {
@@ -165,20 +184,33 @@ public class OpenGLRenderer implements Renderer {
     }
 
     private void createViewMatrix() {
+        //Для теста
+        float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
+        float angle = time  *  2 * 3.1415926f;
+
+
         // точка положения камеры
+
         eyeX = 0;
         eyeY = 0;
-        float eyeZ = 4;
+        eyeZ = 4;
+
+        /*
+        eyeX = (float) (Math.cos(angle) * 4f);
+        eyeY = 1f;
+        eyeZ = (float) (Math.sin(angle) * 4f);
+        */
+
 
         // точка направления камеры
-        float centerX = 0;
-        float centerY = 0;
-        float centerZ = 0;
+        centerX = 0;
+        centerY = 0;
+        centerZ = 0;
 
         // up-вектор
-        float upX = 0;
-        float upY = 1;
-        float upZ = 0;
+        upX = 0;
+        upY = 1;
+        upZ = 0;
 
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
     }
@@ -191,6 +223,9 @@ public class OpenGLRenderer implements Renderer {
 
     @Override
     public void onDrawFrame(GL10 arg0) {
+        bindMatrix();
+        createViewMatrix();
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // треугольники
