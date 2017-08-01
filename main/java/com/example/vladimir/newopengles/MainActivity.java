@@ -21,17 +21,24 @@ public class MainActivity extends Activity {
             finish();
             return;
         }
-
         setContentView(R.layout.activity_main);
-        glSurfaceView = (OpenGLSurfaceView) findViewById(R.id.MyGLSurfaceViewID);
+        glSurfaceView = findViewById(R.id.MyGLSurfaceViewID);
+
+        glSurfaceView.setEGLContextClientVersion(2);
+        glSurfaceView.setRenderer(new OpenGLRenderer(this));
+
+/*
+        setContentView(R.layout.activity_main); // Лайоут
+        glSurfaceView = (OpenGLSurfaceView) findViewById(R.id.MyGLSurfaceViewID); //Вью
+        glSurfaceView.setRenderer(new OpenGLRenderer(this)); //рендер
+*/
+
 /*
         glSurfaceView = new GLSurfaceView(this);
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(new OpenGLRenderer(this));
         setContentView(glSurfaceView);
 */
-
-
     }
 
     @Override

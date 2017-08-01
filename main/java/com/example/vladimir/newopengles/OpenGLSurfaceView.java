@@ -85,7 +85,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
 
-                    //renderer.angleX += dy;
+                    //renderer += dy;
                     //renderer.angleY += dx;
                     mLastTouchX = x;
                     mLastTouchY = y;
