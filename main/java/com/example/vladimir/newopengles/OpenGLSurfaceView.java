@@ -26,7 +26,6 @@ public class OpenGLSurfaceView extends GLSurfaceView {
     int flag =0; //для проверки
     private float mLastTouchX;
     private float mLastTouchY;
-
     private int degrees;
 
 
@@ -53,6 +52,9 @@ public class OpenGLSurfaceView extends GLSurfaceView {
             mLastTouchY = y;    //(NEW)
             Log.e("Event", "PointerCount = " +y);
             flag =0;
+
+            //Так тоже работать не хочет
+            renderer.eyeX +=1;
             return true;
         }
 

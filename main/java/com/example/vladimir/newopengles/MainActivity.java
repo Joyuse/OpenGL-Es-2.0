@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -21,15 +22,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
     private GLSurfaceView glSurfaceView;
     OpenGLSurfaceView renderer;
     private ListView listView;
-    //private String [] drawerItems;
+    private String [] drawerItems;
     private MyAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (!supportES2()) {
             Toast.makeText(this, "OpenGL ES 2.0 is not supported", Toast.LENGTH_LONG).show();
@@ -37,6 +39,7 @@ public class MainActivity extends Activity {
             return;
         }
 
+        //Для вида
         setContentView(R.layout.activity_main);
         glSurfaceView = findViewById(R.id.OpenGLSurfaceViewID);
         glSurfaceView.setEGLContextClientVersion(2);
@@ -47,9 +50,12 @@ public class MainActivity extends Activity {
         myAdapter = new MyAdapter(this);
         listView.setAdapter(myAdapter);
 
-        //Кнопки
+        //Кнопки + -
         Button ZoomIn = findViewById(R.id.ZoomIn);
         Button ZoomOut = findViewById(R.id.ZoomOut);
+        //Обработка + -
+        ZoomOut.setOnClickListener(ZoomOutListener);
+        ZoomIn.setOnClickListener(ZoomInListener);
     }
 
     @Override
@@ -64,6 +70,20 @@ public class MainActivity extends Activity {
         glSurfaceView.onResume();
     }
 
+    //ИтемКлик для адаптера
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        Toast.makeText(this,drawerItems[position]+ " was selected", Toast.LENGTH_SHORT).show();
+        selectItem(position);
+    }
+
+    //Для адаптера
+    public void selectItem(int position) {
+        listView.setItemChecked(position,true);
+        setTitle(drawerItems[position]);
+    }
+
+    //функция проверки OpenGL2
     private boolean supportES2() {
         ActivityManager activityManager =
                 (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -71,6 +91,29 @@ public class MainActivity extends Activity {
         return (configurationInfo.reqGlEsVersion >= 0x20000);
     }
 
+    @Override
+    public void onClick(View view) {
+
+    }
+
+    //Функция-Обработчик нажатия на кнопки
+    View.OnClickListener ZoomInListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //renderer. += 5;
+            Log.e("ZoomIn", "ZoomIn");
+        }
+    };
+
+    View.OnClickListener ZoomOutListener =  new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //renderer.z -= 5;
+            Log.e("ZoomOut","ZoomOut");
+        }
+    };
+
+    //Адаптера
     class MyAdapter extends BaseAdapter {
 
         Context contex;
@@ -145,7 +188,6 @@ public class MainActivity extends Activity {
                             Log.e("Event", "PointerCount 5 = " + drawerItems[5]);
                             break;
                     }
-                    Log.e("Event", "PointerCount = " +drawerItems[p]);
                 }
             };
             row.setOnClickListener(makeListener);

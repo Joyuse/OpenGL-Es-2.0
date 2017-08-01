@@ -201,7 +201,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         eyeZ = (float) (Math.sin(angle) * 4f);
         */
 
-
         // точка направления камеры
         centerX = 0;
         centerY = 0;
@@ -214,7 +213,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
     }
-
 
     private void bindMatrix() {
         Matrix.multiplyMM(mMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
