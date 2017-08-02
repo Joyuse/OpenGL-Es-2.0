@@ -48,7 +48,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     // точка положения камеры
     public float eyeX;
     public float eyeY;
-    public float eyeZ;
+    public float eyeZ = 4;
 
     // точка направления камеры
     public float centerX;
@@ -195,11 +195,12 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         eyeY = 0;
         eyeZ = 4;
 
-        /*
+/*
         eyeX = (float) (Math.cos(angle) * 4f);
         eyeY = 1f;
         eyeZ = (float) (Math.sin(angle) * 4f);
         */
+
 
         // точка направления камеры
         centerX = 0;
@@ -223,6 +224,9 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 arg0) {
         bindMatrix();
         createViewMatrix();
+
+
+
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

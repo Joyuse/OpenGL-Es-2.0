@@ -54,7 +54,8 @@ public class OpenGLSurfaceView extends GLSurfaceView {
             flag =0;
 
             //Так тоже работать не хочет
-            renderer.eyeX +=1;
+            renderer.eyeZ +=1;
+            requestRender(); //
             return true;
         }
 
