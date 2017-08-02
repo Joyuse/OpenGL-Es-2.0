@@ -5,6 +5,8 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
 import android.os.SystemClock;
+import android.util.Log;
+import android.view.MotionEvent;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -48,7 +50,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     // точка положения камеры
     public float eyeX;
     public float eyeY;
-    public float eyeZ = 4;
+    public float eyeZ;
 
     // точка направления камеры
     public float centerX;
@@ -59,6 +61,9 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     public float upX;
     public float upY;
     public float upZ;
+
+    //проверка
+    public float test;
 
     //Буферы
     private FloatBuffer vertexData;
@@ -188,14 +193,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
         float angle = time  *  2 * 3.1415926f;
 
-
         // точка положения камеры
 
         eyeX = 0;
         eyeY = 0;
-        eyeZ = 4;
+        //eyeZ = 4;
 
-/*
+        /*
         eyeX = (float) (Math.cos(angle) * 4f);
         eyeY = 1f;
         eyeZ = (float) (Math.sin(angle) * 4f);
@@ -203,6 +207,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
 
         // точка направления камеры
+
         centerX = 0;
         centerY = 0;
         centerZ = 0;
@@ -222,11 +227,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 arg0) {
-        bindMatrix();
         createViewMatrix();
-
-
-
+        bindMatrix();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

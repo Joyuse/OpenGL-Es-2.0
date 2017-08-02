@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
     private GLSurfaceView glSurfaceView;
-    OpenGLSurfaceView renderer;
+    OpenGLRenderer renderer;
     private ListView listView;
     private String [] drawerItems;
     private MyAdapter myAdapter;

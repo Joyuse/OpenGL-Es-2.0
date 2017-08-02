@@ -32,8 +32,6 @@ public class OpenGLSurfaceView extends GLSurfaceView {
     public OpenGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         renderer = new OpenGLRenderer(context);
-        //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        //this.setRenderer(renderer);
         this.requestFocus();
         this.setFocusableInTouchMode(true);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
@@ -48,14 +46,14 @@ public class OpenGLSurfaceView extends GLSurfaceView {
             final float x = event.getX();   //(NEW)
             final float y = event.getY();   //(NEW)
             mLastTouchX = x;    //(NEW)
-            Log.e("Event", "PointerCount = " +x);
+            Log.w("Event", "PointerCount = " +x);
             mLastTouchY = y;    //(NEW)
-            Log.e("Event", "PointerCount = " +y);
+            Log.w("Event", "PointerCount = " +y);
             flag =0;
 
             //Так тоже работать не хочет
             renderer.eyeZ +=1;
-            requestRender(); //
+            renderer.test +=1;
             return true;
         }
 
@@ -89,9 +87,9 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
 
-                    //renderer. += dy;
-                    //renderer.angleY += dx;
-
+                    //Движение по X и Y
+                    renderer.eyeY += dy;
+                    renderer.eyeX += dx;
                     mLastTouchX = x;
                     mLastTouchY = y;
                 }
