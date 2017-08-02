@@ -24,10 +24,10 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
     private GLSurfaceView glSurfaceView;
-    OpenGLRenderer renderer;
     private ListView listView;
     private String [] drawerItems;
     private MyAdapter myAdapter;
+    OpenGLRenderer renderer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         setContentView(R.layout.activity_main);
         glSurfaceView = findViewById(R.id.OpenGLSurfaceViewID);
         glSurfaceView.setEGLContextClientVersion(2);
+
+        //в случае чего нажать бэкспейс и раскоментить
         glSurfaceView.setRenderer(new OpenGLRenderer(this));
+
 
         //Адаптер для меню
         listView = (ListView)findViewById(R.id.drawer_list);

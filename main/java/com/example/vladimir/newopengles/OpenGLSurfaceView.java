@@ -28,10 +28,22 @@ public class OpenGLSurfaceView extends GLSurfaceView {
     private float mLastTouchY;
     private int degrees;
 
-
     public OpenGLSurfaceView(Context context, AttributeSet attrs) {
+
         super(context, attrs);
-        renderer = new OpenGLRenderer(context);
+
+        @Override
+        setRenderer(Renderer r){
+            super.setRenderer(r)
+                    this.renderer = r;
+        }
+
+        //Почти работающий вариант
+        //renderer = new OpenGLRenderer(context);
+
+
+        //переопределил рендерер во вью
+        //setRenderer(renderer);
         this.requestFocus();
         this.setFocusableInTouchMode(true);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
@@ -46,9 +58,9 @@ public class OpenGLSurfaceView extends GLSurfaceView {
             final float x = event.getX();   //(NEW)
             final float y = event.getY();   //(NEW)
             mLastTouchX = x;    //(NEW)
-            Log.w("Event", "PointerCount = " +x);
+            Log.w("Event", "X = " +x);
             mLastTouchY = y;    //(NEW)
-            Log.w("Event", "PointerCount = " +y);
+            Log.w("Event", "Y = " +y);
             flag =0;
 
             //Так тоже работать не хочет
@@ -60,15 +72,15 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         switch (event.getPointerCount()) {
             case 3:
                 //3 пальца
-                Log.e("Event", "PointerCount = " +event.getPointerCount());
+                Log.e("Event", "Пальцев = " +event.getPointerCount());
                 return mScaleDetector.onTouchEvent(event);
             case 2:
                 //2 пальца
-                Log.e("Event", "PointerCount = " +event.getPointerCount());
+                Log.e("Event", "Пальцев = " +event.getPointerCount());
                 return doRotationEvent(event);
             case 1:
                 //1 палец
-                Log.e("Event", "PointerCount = " +event.getPointerCount());
+                Log.e("Event", "Пальцев = " +event.getPointerCount());
                 return doMoveEvent(event);
         }
         return true;
@@ -83,6 +95,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 if (flag > 4) {
                     final float x = event.getX();
                     final float y = event.getY();
+
                     // считаем движение
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
@@ -90,6 +103,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                     //Движение по X и Y
                     renderer.eyeY += dy;
                     renderer.eyeX += dx;
+
                     mLastTouchX = x;
                     mLastTouchY = y;
                 }
@@ -148,9 +162,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         public boolean onScale(ScaleGestureDetector detector) {
             mScaleFactor *= detector.getScaleFactor();
             mScaleFactor = Math.max(18.0f, Math.min(mScaleFactor, 1500.0f));
-
             renderer.eyeZ = -mScaleFactor;
-
             flag = 0;
             return true;
         }

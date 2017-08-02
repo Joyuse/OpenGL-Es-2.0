@@ -197,7 +197,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         eyeX = 0;
         eyeY = 0;
-        //eyeZ = 4;
+        eyeZ = 4;
 
         /*
         eyeX = (float) (Math.cos(angle) * 4f);
@@ -258,6 +258,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         glDrawArrays(GL_LINES, 16, 2);
     }
 }
+
 /*
 public class OpenGLRenderer implements Renderer {
 
