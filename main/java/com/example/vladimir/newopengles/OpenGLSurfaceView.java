@@ -159,9 +159,12 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 //в градусы
                 degrees = (int) (radians * 180 / Math.PI);
                 if (flag >10) {
+                    //в зависимости от того куда крутить
                     if ((degrees - mLastAngle) > 45) {
+                        //Сюда запилить приколюхи
                         mode = -5;
                     } else if ((degrees - mLastAngle) < -45) {
+                        // и сюда тоже
                         mode = 5;
                     } else {
                         mode = degrees - mLastAngle;
