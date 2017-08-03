@@ -6,6 +6,7 @@ package com.example.vladimir.newopengles;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,6 +14,9 @@ import android.view.ScaleGestureDetector;
 
 
 public class OpenGLSurfaceView extends GLSurfaceView {
+
+    private final static long TIME = 10000;
+
 
     private ScaleGestureDetector mScaleDetector;
     OpenGLRenderer renderer,r;
@@ -47,6 +51,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         this.renderer = r; // вроде должно работать для всех, но не факт, я не проверял:D
     }
 
+    //Работкает :3
     @Override
     public void setRenderer(Renderer r){
         super.setRenderer(r);
@@ -66,11 +71,6 @@ public class OpenGLSurfaceView extends GLSurfaceView {
             mLastTouchY = y;    //(NEW)
             Log.w("Event", "Y = " +y);
             flag =0;
-
-            //Так тоже работать не хочет
-            renderer.eyeZ +=1;
-            renderer.test +=1;
-            //renderer.test +=1;
             return true;
         }
 
@@ -105,9 +105,21 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
 
+                    Log.w("DX", "DX = " +dx);
+                    Log.w("DY", "DY = " +dy);
+
                     //Движение по X и Y
-                    renderer.eyeY += dy;
-                    renderer.eyeX += dx;
+                    //renderer.eyeX = (float) ((Math.cos(dy) * 4f) / 16);
+                    //renderer.eyeY += dy;
+                    //renderer.eyeX += dx;
+
+                    //renderer.centerX += (float) ((Math.cos(dx) * 4f) / 32);
+                    //renderer.centerY += (float) ((Math.cos(dy) * 4f) / 32);
+
+                    //renderer.centerY += (float) ((Math.cos(dx) * 4f) / 32);
+                    //renderer.centerY -= (float) ((Math.cos(dx) * 4f) / 32);
+
+                    //renderer.eyeZ += (float) ((Math.sin(1) * 4f) / 32);
 
                     mLastTouchX = x;
                     mLastTouchY = y;
@@ -144,7 +156,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
             case MotionEvent.ACTION_MOVE:
                 flag ++;
                 double radians = Math.atan(deltaY / deltaX);
-                //конвертим
+                //в градусы
                 degrees = (int) (radians * 180 / Math.PI);
                 if (flag >10) {
                     if ((degrees - mLastAngle) > 45) {
@@ -155,7 +167,26 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                         mode = degrees - mLastAngle;
                     }
                 }
-                //renderer.spinRotate -= mode;
+
+                //А НАХУЯ, когда я могу просто задать градус поворота и нормально будет(навреное)
+                //Для теста, пробнем прикольно наверное полчится:D
+                //Заменить TIME на что то другое, а именно на что то такое что не будет превышать 1 и не будет меньше 0, вот, так мы получим крутилку, по идее.
+                float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
+                float angle = time  *  2 * 3.1415926f;
+                renderer.eyeX = (float) ((Math.cos(angle) * 4f));
+                renderer.eyeY = 1f;
+                renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
+
+                /**
+                // Перевод в градусы хе-хе
+                float angle = degrees  *  2 * 3.1415926f;
+                //Повернуть камеру по кругу на полученные градусы
+                renderer.eyeX =  (float) ((Math.cos(angle) * 4f));
+                Log.w("EYEX", "Angle COS = " +(Math.cos(angle) * 4f));
+                renderer.eyeZ =  (float) ((Math.sin(angle) * 4f));
+                Log.w("EYEZ", "Angle SIN = " +(Math.sin(angle) * 4f));
+                renderer.eyeY = 1f;
+                */
                 mLastAngle = degrees;
                 break;
         }
@@ -167,7 +198,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         public boolean onScale(ScaleGestureDetector detector) {
             mScaleFactor *= detector.getScaleFactor();
             mScaleFactor = Math.max(18.0f, Math.min(mScaleFactor, 1500.0f));
-            renderer.eyeZ = -mScaleFactor;
+            //renderer.eyeZ = -mScaleFactor;
             flag = 0;
             return true;
         }

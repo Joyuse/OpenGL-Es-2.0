@@ -59,7 +59,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     // up-вектор
     public float upX;
-    public float upY;
+    public float upY = 1;
     public float upZ;
 
     //проверка
@@ -195,8 +195,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         // точка положения камеры
 
-        eyeX = 0;
-        eyeY = 0;
+        //eyeX = 0;
+        //eyeY = 0;
         //eyeZ = 4;
 
         /*
@@ -205,17 +205,17 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         eyeZ = (float) (Math.sin(angle) * 4f);
         */
 
-
         // точка направления камеры
 
-        centerX = 0;
-        centerY = 0;
-        centerZ = 0;
+        //centerX = 0;
+        //centerY = 0;
+        //centerZ = 0;
 
-        // up-вектор
-        upX = 0;
-        upY = 1;
-        upZ = 0;
+
+        // up-вектор трокать не нужно(наклоны и т.д)
+        //upX = 0;
+        //upY = 1;
+        //upZ = 0;
 
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
     }
