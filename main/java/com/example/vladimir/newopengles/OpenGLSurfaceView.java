@@ -44,13 +44,13 @@ public class OpenGLSurfaceView extends GLSurfaceView {
 
     public void setMyCustomRenderer(OpenGLRenderer r){
         setRenderer(r);
-        this.renderer = r; // if yoy are goi
+        this.renderer = r; // вроде должно работать для всех, но не факт, я не проверял:D
     }
 
     @Override
     public void setRenderer(Renderer r){
         super.setRenderer(r);
-        this.renderer = (OpenGLRenderer)r; // if yoy are going to use only OpenGLRenderer, other way -> exceptions
+        this.renderer = (OpenGLRenderer)r; // Если буду использовать только OpenGLRenderer, иначе -> исключения
     }
 
     @Override
