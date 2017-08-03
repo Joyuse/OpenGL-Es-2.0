@@ -31,10 +31,9 @@ public class OpenGLSurfaceView extends GLSurfaceView {
     public OpenGLSurfaceView(Context context, AttributeSet attrs) {
 
         super(context, attrs);
+
         //Почти работающий вариант
         //renderer = new OpenGLRenderer(context);
-
-
 
         //переопределил рендерер во вью
         //setRenderer(renderer);
@@ -43,12 +42,16 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
     }
 
-    @Override
-    void setRenderer(Renderer r){
-        super.setRenderer(r);
-        this.renderer = r;
+    public void setMyCustomRenderer(OpenGLRenderer r){
+        setRenderer(r);
+        this.renderer = r; // if yoy are goi
     }
 
+    @Override
+    public void setRenderer(Renderer r){
+        super.setRenderer(r);
+        this.renderer = (OpenGLRenderer)r; // if yoy are going to use only OpenGLRenderer, other way -> exceptions
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -67,6 +70,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
             //Так тоже работать не хочет
             renderer.eyeZ +=1;
             renderer.test +=1;
+            //renderer.test +=1;
             return true;
         }
 

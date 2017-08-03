@@ -50,7 +50,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     // точка положения камеры
     public float eyeX;
     public float eyeY;
-    public float eyeZ;
+    public float eyeZ = 4;
 
     // точка направления камеры
     public float centerX;
@@ -197,7 +197,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         eyeX = 0;
         eyeY = 0;
-        eyeZ = 4;
+        //eyeZ = 4;
 
         /*
         eyeX = (float) (Math.cos(angle) * 4f);
