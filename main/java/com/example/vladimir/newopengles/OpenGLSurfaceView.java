@@ -15,7 +15,7 @@ import android.view.ScaleGestureDetector;
 public class OpenGLSurfaceView extends GLSurfaceView {
 
     private ScaleGestureDetector mScaleDetector;
-    OpenGLRenderer renderer;
+    OpenGLRenderer renderer,r;
     private int mLastAngle = 0;
     private float mScaleFactor = 1.0f;
     private static final int INVALID_POINTER_ID = -1;
@@ -31,15 +31,9 @@ public class OpenGLSurfaceView extends GLSurfaceView {
     public OpenGLSurfaceView(Context context, AttributeSet attrs) {
 
         super(context, attrs);
-
-        @Override
-        setRenderer(Renderer r){
-            super.setRenderer(r)
-                    this.renderer = r;
-        }
-
         //Почти работающий вариант
         //renderer = new OpenGLRenderer(context);
+
 
 
         //переопределил рендерер во вью
@@ -48,6 +42,13 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         this.setFocusableInTouchMode(true);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
     }
+
+    @Override
+    void setRenderer(Renderer r){
+        super.setRenderer(r);
+        this.renderer = r;
+    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
