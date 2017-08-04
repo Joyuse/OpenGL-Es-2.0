@@ -12,6 +12,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 
 public class OpenGLSurfaceView extends GLSurfaceView {
 
@@ -24,13 +27,22 @@ public class OpenGLSurfaceView extends GLSurfaceView {
     private float mScaleFactor = 1.0f;
     private static final int INVALID_POINTER_ID = -1;
     private int mActivePointerId = INVALID_POINTER_ID;
-    private int mode;
+    private int mode = 1;
     private float deltaX, deltaY;
     private final float TOUCH_SCALE_FACTOR = 90.0f / 320.0f;
     int flag =0; //для проверки
     private float mLastTouchX;
     private float mLastTouchY;
     private int degrees;
+
+
+    //специально для углов
+    float angle;
+    float forX, forZ;
+    float forX2,forZ2;
+    //незнаю зачем, но попробую
+    float speedX,speedZ,speedX2,speedZ2;
+
 
     public OpenGLSurfaceView(Context context, AttributeSet attrs) {
 
@@ -41,6 +53,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
 
         //переопределил рендерер во вью
         //setRenderer(renderer);
+
         this.requestFocus();
         this.setFocusableInTouchMode(true);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
@@ -67,9 +80,9 @@ public class OpenGLSurfaceView extends GLSurfaceView {
             final float x = event.getX();   //(NEW)
             final float y = event.getY();   //(NEW)
             mLastTouchX = x;    //(NEW)
-            Log.w("Event", "X = " +x);
+            //Log.w("Event", "X = " +x);
             mLastTouchY = y;    //(NEW)
-            Log.w("Event", "Y = " +y);
+            //Log.w("Event", "Y = " +y);
             flag =0;
             return true;
         }
@@ -77,15 +90,15 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         switch (event.getPointerCount()) {
             case 3:
                 //3 пальца
-                Log.e("Event", "Пальцев = " +event.getPointerCount());
+                //Log.e("Event", "Пальцев = " +event.getPointerCount());
                 return mScaleDetector.onTouchEvent(event);
             case 2:
                 //2 пальца
-                Log.e("Event", "Пальцев = " +event.getPointerCount());
+                //Log.e("Event", "Пальцев = " +event.getPointerCount());
                 return doRotationEvent(event);
             case 1:
                 //1 палец
-                Log.e("Event", "Пальцев = " +event.getPointerCount());
+                //Log.e("Event", "Пальцев = " +event.getPointerCount());
                 return doMoveEvent(event);
         }
         return true;
@@ -105,8 +118,8 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
 
-                    Log.w("DX", "DX = " +dx);
-                    Log.w("DY", "DY = " +dy);
+                    //Log.w("DX", "DX = " +dx);
+                    //Log.w("DY", "DY = " +dy);
 
                     //Движение по X и Y
                     //renderer.eyeX = (float) ((Math.cos(dy) * 4f) / 16);
@@ -155,31 +168,127 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 break;
             case MotionEvent.ACTION_MOVE:
                 flag ++;
+                //Log.w("FLAG", "FLAG = "+ flag);
                 double radians = Math.atan(deltaY / deltaX);
                 //в градусы
                 degrees = (int) (radians * 180 / Math.PI);
+
                 if (flag >10) {
+                    /*
+                    Log.w("ЧО ЗА ХУНЯ", "ХУНЯ = "+ flag);
+                    Log.w("dergess", "DEGRESS = "+ degrees);
+                    */
+
                     //в зависимости от того куда крутить
-                    if ((degrees - mLastAngle) > 45) {
-                        //Сюда запилить приколюхи
-                        mode = -5;
-                    } else if ((degrees - mLastAngle) < -45) {
-                        // и сюда тоже
-                        mode = 5;
-                    } else {
-                        mode = degrees - mLastAngle;
+                    if (degrees > 0)
+                    {
+                        Log.w("Указательный палце", "ВЛЕВО");
+                        forX += 0.001f;
+                        forZ -= 0.001f;
+                        float angle = forX * 2 * 3.1415926f;
+                        renderer.eyeX = (float) ((Math.cos(angle) * 4f));
+                        renderer.eyeY = 1f;
+                        renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
+
+                        //renderer.eyeX += 0.1f;
+                        //renderer.eyeZ -= 0.1f;
+                        /*
+                        Log.w("БОЛЬШЕ", "45 = ");
+                        float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
+                        float angle = time  *  2 * 3.1415926f;
+                        //Log.w("TIME", "TIME = " +(time  *  2 * 3.1415926f));
+                        renderer.eyeX = (float) ((Math.cos(angle) * 4f));
+                        //Log.w("EYEX", "Angle COS = " +(Math.cos(angle) * 4f));
+                        renderer.eyeY = 1f;
+                        renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
+                        */
                     }
+
+                    else if (degrees < 0)
+                    {
+                        Log.w("Указательный палце", "ВПРАВО");
+                        forX2 -= 0.001f;
+                        forZ2 += 0.001f;
+                        float angle = forX2 * 2 * 3.1415926f;
+                        renderer.eyeX = (float) ((Math.sin(angle) * 4f));
+                        renderer.eyeY = 1f;
+                        renderer.eyeZ = (float) ((Math.cos(angle) * 4f));
+
+                        /*
+                        renderer.eyeX -= 0.1f;
+                        renderer.eyeZ += 0.1f;
+                        */
+                        /*
+                        Log.w("МЕНЬШЕ", "- 45 = ");
+                        float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
+                        float angle = time  *  2 * 3.1415926f;
+                        //Log.w("TIME", "TIME = " +(time  *  2 * 3.1415926f));
+                        renderer.eyeX = (float) ((Math.sin(angle) * 4f));
+                        //Log.w("EYEX", "Angle COS = " +(Math.cos(angle) * 4f));
+                        renderer.eyeY = 1f;
+                        renderer.eyeZ = (float) ((Math.cos(angle) * 4f));
+                        */
+                    }
+
+
+                    //if ((degrees - mLastAngle) >= 1) {
+                        /*
+                        float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
+                        float angle = time  *  2 * 3.1415926f;
+                        Log.w("TIME", "TIME = " +(time  *  2 * 3.1415926f));
+                        renderer.eyeX = (float) ((Math.cos(angle) * 4f));
+                        Log.w("EYEX", "Angle COS = " +(Math.cos(angle) * 4f));
+                        renderer.eyeY = 1f;
+                        renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
+                        Log.w("EYEX", "Angle SIN = " +(Math.cos(angle) * 4f));
+                        */
+                        /*
+                        //Сюда запилить приколюхи
+                        mode += 0.001f;
+                        renderer.eyeX = (float) ((cos(mode) * 4f));
+                        renderer.eyeZ = (float) ((sin(mode) * 4f));
+                        */
+
+                    //} else if ((degrees - mLastAngle) >= -1) {
+                        /*
+                        float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
+                        float angle = time  *  2 * 3.1415926f;
+                        Log.w("TIME", "TIME = " +(time  *  2 * 3.1415926f));
+                        renderer.eyeX = (float) ((Math.sin(angle) * 4f));
+                        Log.w("EYEX", "Angle COS = " +(Math.cos(angle) * 4f));
+                        renderer.eyeY = 1f;
+                        renderer.eyeZ = (float) ((Math.cos(angle) * 4f));
+                        Log.w("EYEX", "Angle SIN = " +(Math.cos(angle) * 4f));
+                        */
+                        /*
+                        Log.w("TIME", "TIME = Меньше чем 45 " + (degrees - mLastAngle));
+
+                        // и сюда тоже
+                        mode -= 0.001f;
+                        renderer.eyeX = (float) ((cos(mode) * 4f));
+                        renderer.eyeZ = (float) ((sin(mode) * 4f));
+                        */
+
+                    //} else {
+                    //  mode = degrees - mLastAngle;
+                    //}
+
+
                 }
 
                 //А НАХУЯ, когда я могу просто задать градус поворота и нормально будет(навреное)
                 //Для теста, пробнем прикольно наверное полчится:D
                 //Заменить TIME на что то другое, а именно на что то такое что не будет превышать 1 и не будет меньше 0, вот, так мы получим крутилку, по идее.
+                /*
                 float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
                 float angle = time  *  2 * 3.1415926f;
+                Log.w("TIME", "TIME = " +(time  *  2 * 3.1415926f));
                 renderer.eyeX = (float) ((Math.cos(angle) * 4f));
+                Log.w("EYEX", "Angle COS = " +(Math.cos(angle) * 4f));
                 renderer.eyeY = 1f;
                 renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
-
+                Log.w("EYEX", "Angle SIN = " +(Math.cos(angle) * 4f));
+                */
                 /**
                 // Перевод в градусы хе-хе
                 float angle = degrees  *  2 * 3.1415926f;
@@ -196,12 +305,13 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         return true;
     }
 
+    //Отдаляет по Z, ура йопт
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(18.0f, Math.min(mScaleFactor, 1500.0f));
-            //renderer.eyeZ = -mScaleFactor;
+            mScaleFactor = Math.max(5.0f, Math.min(mScaleFactor, 1500.0f));
+            renderer.eyeZ = mScaleFactor;
             flag = 0;
             return true;
         }

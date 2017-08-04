@@ -62,6 +62,10 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     public float upY = 1;
     public float upZ;
 
+    //Угол поворота
+    public float mAngle;
+
+
     //проверка
     public float test;
 
@@ -73,8 +77,11 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     private int programId;
 
     //Матрицы
+    //Матрица проекции
     private float[] mProjectionMatrix = new float[16];
+    //Матрица камеры(вида)
     private float[] mViewMatrix = new float[16];
+    //Итоговая матрица =  mProjectionMatrix * mViewMatrix
     private float[] mMatrix = new float[16];
 
 
@@ -217,16 +224,26 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         //upY = 1;
         //upZ = 0;
 
+        /**
+         * eyeX, eyeY, eyeZ – координаты точки положения камеры, т.е. где находится камера
+        centerX, centerY, centerZ – координаты точки направления камеры, т.е. куда камера смотрит
+        upX, upY, upZ – координаты up-вектора, т.е. вектора, позволяющего задать поворот камеры вокруг оси «взгляда»
+         */
+
+
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
     }
 
     private void bindMatrix() {
+        //Перемножаем матрицы
         Matrix.multiplyMM(mMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
+        //результат в mMatrix
         glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix, 0);
     }
 
     @Override
     public void onDrawFrame(GL10 arg0) {
+
         createViewMatrix();
         bindMatrix();
 
