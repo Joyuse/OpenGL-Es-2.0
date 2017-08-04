@@ -197,8 +197,10 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     private void createViewMatrix() {
         //Для теста
+        /*
         float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
         float angle = time  *  2 * 3.1415926f;
+        */
 
         // точка положения камеры
 

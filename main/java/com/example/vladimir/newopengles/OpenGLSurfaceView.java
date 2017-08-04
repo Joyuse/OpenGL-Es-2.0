@@ -209,7 +209,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                         Log.w("Указательный палце", "ВПРАВО");
                         forX2 -= 0.001f;
                         forZ2 += 0.001f;
-                        float angle = forX2 * 2 * 3.1415926f;
+                        float angle = forZ2 * 2 * 3.1415926f;
                         renderer.eyeX = (float) ((Math.sin(angle) * 4f));
                         renderer.eyeY = 1f;
                         renderer.eyeZ = (float) ((Math.cos(angle) * 4f));
@@ -272,10 +272,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                     //} else {
                     //  mode = degrees - mLastAngle;
                     //}
-
-
                 }
-
                 //А НАХУЯ, когда я могу просто задать градус поворота и нормально будет(навреное)
                 //Для теста, пробнем прикольно наверное полчится:D
                 //Заменить TIME на что то другое, а именно на что то такое что не будет превышать 1 и не будет меньше 0, вот, так мы получим крутилку, по идее.
@@ -289,6 +286,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
                 Log.w("EYEX", "Angle SIN = " +(Math.cos(angle) * 4f));
                 */
+
                 /**
                 // Перевод в градусы хе-хе
                 float angle = degrees  *  2 * 3.1415926f;
