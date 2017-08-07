@@ -45,15 +45,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
 
 
     public OpenGLSurfaceView(Context context, AttributeSet attrs) {
-
         super(context, attrs);
-
-        //Почти работающий вариант
-        //renderer = new OpenGLRenderer(context);
-
-        //переопределил рендерер во вью
-        //setRenderer(renderer);
-
         this.requestFocus();
         this.setFocusableInTouchMode(true);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
@@ -119,11 +111,11 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                     //Считываем разницу муежду касаниями движение
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
-                    //Двигает вверх вниз
-                    renderer.centerX += dx / 256;
-                    renderer.centerY += dy / 256;
                     //Направление камеры
-                    renderer.eyeX += dx / 256;
+                    renderer.centerX += -dx / 256;
+                    renderer.centerY += dy / 256;
+                    //Координаты положения камеры
+                    renderer.eyeX += -dx / 256;
                     renderer.eyeY += dy / 256;
                     //Посление касание
                     mLastTouchX = x;
@@ -140,7 +132,6 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         }
         return true;
     }
-
 
     //Повороты
     private boolean doRotationEvent(MotionEvent event) {
@@ -161,38 +152,42 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 flag =0;
                 break;
             case MotionEvent.ACTION_MOVE:
-                flag ++;
-                double radians = Math.atan(deltaY / deltaX);
-                //в градусы
-                degrees = (int) (radians * 180 / Math.PI);
-                if (flag >10) {
-                    //в зависимости от того куда крутить
-                    if (degrees > 0)
-                    {
-                        Log.w("Указательный палец", "ВЛЕВО");
-                        forX += 0.001f;
-                        forZ -= 0.001f;
+                /***
+                 *
+                 /*
+                 flag ++;
+                 double radians = Math.atan(deltaY / deltaX);
+                 //в градусы
+                 degrees = (int) (radians * 180 / Math.PI);
+                 if (flag >10) {
+                 //в зависимости от того куда крутить
+                 if (degrees > 0)
+                 {
+                 Log.w("Указательный палец", "ВЛЕВО");
 
-                        float angle = forX * 2 * 3.1415926f;
-                        renderer.eyeX = (float) ((Math.cos(angle) * 4f));
-                        //renderer.eyeY = 1f;
-                        renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
+                 forX += 0.001f;
+                 forZ -= 0.001f;
 
-                        //renderer.eyeX += 0.1f;
-                        //renderer.eyeZ -= 0.1f;
+                 float angle = forX * 2 * 3.1415926f;
+                 renderer.eyeX = (float) ((Math.cos(angle) * 4f));
+                 //renderer.eyeY = 1f;
+                 renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
 
-                        /*
-                        Log.w("БОЛЬШЕ", "45 = ");
-                        float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
-                        float angle = time  *  2 * 3.1415926f;
-                        //Log.w("TIME", "TIME = " +(time  *  2 * 3.1415926f));
-                        renderer.eyeX = (float) ((Math.cos(angle) * 4f));
-                        //Log.w("EYEX", "Angle COS = " +(Math.cos(angle) * 4f));
-                        renderer.eyeY = 1f;
-                        renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
-                        */
-                    }
+                 //renderer.eyeX += 0.1f;
+                 //renderer.eyeZ -= 0.1f;
 
+                 /*
+                 Log.w("БОЛЬШЕ", "45 = ");
+                 float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
+                 float angle = time  *  2 * 3.1415926f;
+                 //Log.w("TIME", "TIME = " +(time  *  2 * 3.1415926f));
+                 renderer.eyeX = (float) ((Math.cos(angle) * 4f));
+                 //Log.w("EYEX", "Angle COS = " +(Math.cos(angle) * 4f));
+                 renderer.eyeY = 1f;
+                 renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
+
+                // }
+                    /*
                     else if (degrees < 0)
                     {
                         Log.w("Указательный палце", "ВПРАВО");
@@ -206,8 +201,8 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                         /*
                         renderer.eyeX -= 0.1f;
                         renderer.eyeZ += 0.1f;
-                        */
-                        /*
+
+
                         Log.w("МЕНЬШЕ", "- 45 = ");
                         float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
                         float angle = time  *  2 * 3.1415926f;
@@ -216,11 +211,11 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                         //Log.w("EYEX", "Angle COS = " +(Math.cos(angle) * 4f));
                         renderer.eyeY = 1f;
                         renderer.eyeZ = (float) ((Math.cos(angle) * 4f));
-                        */
-                    }
+
+                //}
 
 
-                    //if ((degrees - mLastAngle) >= 1) {
+                //if ((degrees - mLastAngle) >= 1) {
                         /*
                         float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
                         float angle = time  *  2 * 3.1415926f;
@@ -230,15 +225,15 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                         renderer.eyeY = 1f;
                         renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
                         Log.w("EYEX", "Angle SIN = " +(Math.cos(angle) * 4f));
-                        */
+
                         /*
                         //Сюда запилить приколюхи
                         mode += 0.001f;
                         renderer.eyeX = (float) ((cos(mode) * 4f));
                         renderer.eyeZ = (float) ((sin(mode) * 4f));
-                        */
 
-                    //} else if ((degrees - mLastAngle) >= -1) {
+
+                //} else if ((degrees - mLastAngle) >= -1) {
                         /*
                         float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
                         float angle = time  *  2 * 3.1415926f;
@@ -248,7 +243,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                         renderer.eyeY = 1f;
                         renderer.eyeZ = (float) ((Math.cos(angle) * 4f));
                         Log.w("EYEX", "Angle SIN = " +(Math.cos(angle) * 4f));
-                        */
+
                         /*
                         Log.w("TIME", "TIME = Меньше чем 45 " + (degrees - mLastAngle));
 
@@ -258,13 +253,13 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                         renderer.eyeZ = (float) ((sin(mode) * 4f));
                         */
 
-                    //} else {
-                    //  mode = degrees - mLastAngle;
-                    //}
-                }
-                //А НАХУЯ, когда я могу просто задать градус поворота и нормально будет(навреное)
-                //Для теста, пробнем прикольно наверное полчится:D
-                //Заменить TIME на что то другое, а именно на что то такое что не будет превышать 1 и не будет меньше 0, вот, так мы получим крутилку, по идее.
+                //} else {
+                //  mode = degrees - mLastAngle;
+                //}
+        //}
+        //А НАХУЯ, когда я могу просто задать градус поворота и нормально будет(навреное)
+        //Для теста, пробнем прикольно наверное полчится:D
+        //Заменить TIME на что то другое, а именно на что то такое что не будет превышать 1 и не будет меньше 0, вот, так мы получим крутилку, по идее.
                 /*
                 float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
                 float angle = time  *  2 * 3.1415926f;
@@ -276,6 +271,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 Log.w("EYEX", "Angle SIN = " +(Math.cos(angle) * 4f));
                 */
 
+
                 /**
                 // Перевод в градусы хе-хе
                 float angle = degrees  *  2 * 3.1415926f;
@@ -286,6 +282,20 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 Log.w("EYEZ", "Angle SIN = " +(Math.sin(angle) * 4f));
                 renderer.eyeY = 1f;
                 */
+                 flag ++;
+                double radians = Math.atan(deltaY / deltaX);
+                //конвертим
+                degrees = (int) (radians * 180 / Math.PI);
+                if (flag >10) {
+                    if ((degrees - mLastAngle) > 45) {
+                        mode = -5;
+                    } else if ((degrees - mLastAngle) < -45) {
+                        mode = 5;
+                    } else {
+                        mode = degrees - mLastAngle;
+                    }
+                }
+                //renderer.spinRotate -= mode;
                 mLastAngle = degrees;
                 break;
         }

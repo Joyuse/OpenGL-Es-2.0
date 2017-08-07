@@ -191,7 +191,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
             bottom *= ratio;
             top *= ratio;
         }
-
         Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
     }
 
@@ -218,11 +217,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         //upX = 0;
         //upY = 1;
         //upZ = 0;
+
         /**
          * eyeX, eyeY, eyeZ – координаты точки положения камеры, т.е. где находится камера
-        centerX, centerY, centerZ – координаты точки направления камеры, т.е. куда камера смотрит
-        upX, upY, upZ – координаты up-вектора, т.е. вектора, позволяющего задать поворот камеры вокруг оси «взгляда»
+         centerX, centerY, centerZ – координаты трочки направления камеры, т.е. куда камера смотрит
+         upX, upY, upZ – координаты up-вектора, т.е. вектора, позволяющего задать поворот камеы вокруг оси «взгляда»
          */
+
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
     }
 
