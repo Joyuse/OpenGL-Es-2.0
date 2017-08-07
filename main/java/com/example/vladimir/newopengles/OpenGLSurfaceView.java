@@ -107,33 +107,25 @@ public class OpenGLSurfaceView extends GLSurfaceView {
     private boolean doMoveEvent(MotionEvent event)
     {
         final int action = event.getAction();
+        //Пока идет действие
         switch (action) {
+            //Если Дейсвтие - движение
             case MotionEvent.ACTION_MOVE: {
                 flag ++;
                 if (flag > 4) {
+                    //Считываем координаты пальца
                     final float x = event.getX();
                     final float y = event.getY();
-
-                    // считаем движение
+                    //Считываем разницу муежду касаниями движение
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
-
-                    //Log.w("DX", "DX = " +dx);
-                    //Log.w("DY", "DY = " +dy);
-
-                    //Движение по X и Y
-                    //renderer.eyeX = (float) ((Math.cos(dy) * 4f) / 16);
-                    //renderer.eyeY += dy;
-                    //renderer.eyeX += dx;
-
-                    //renderer.centerX += (float) ((Math.cos(dx) * 4f) / 32);
-                    //renderer.centerY += (float) ((Math.cos(dy) * 4f) / 32);
-
-                    //renderer.centerY += (float) ((Math.cos(dx) * 4f) / 32);
-                    //renderer.centerY -= (float) ((Math.cos(dx) * 4f) / 32);
-
-                    //renderer.eyeZ += (float) ((Math.sin(1) * 4f) / 32);
-
+                    //Двигает вверх вниз
+                    renderer.centerX += dx / 256;
+                    renderer.centerY += dy / 256;
+                    //Направление камеры
+                    renderer.eyeX += dx / 256;
+                    renderer.eyeY += dy / 256;
+                    //Посление касание
                     mLastTouchX = x;
                     mLastTouchY = y;
                 }
@@ -149,6 +141,8 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         return true;
     }
 
+
+    //Повороты
     private boolean doRotationEvent(MotionEvent event) {
         //расчитываем угол менжду двумя пальцами
         deltaX = event.getX(1) - event.getX(0);
@@ -168,30 +162,25 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 break;
             case MotionEvent.ACTION_MOVE:
                 flag ++;
-                //Log.w("FLAG", "FLAG = "+ flag);
                 double radians = Math.atan(deltaY / deltaX);
                 //в градусы
                 degrees = (int) (radians * 180 / Math.PI);
-
                 if (flag >10) {
-                    /*
-                    Log.w("ЧО ЗА ХУНЯ", "ХУНЯ = "+ flag);
-                    Log.w("dergess", "DEGRESS = "+ degrees);
-                    */
-
                     //в зависимости от того куда крутить
                     if (degrees > 0)
                     {
-                        Log.w("Указательный палце", "ВЛЕВО");
+                        Log.w("Указательный палец", "ВЛЕВО");
                         forX += 0.001f;
                         forZ -= 0.001f;
+
                         float angle = forX * 2 * 3.1415926f;
                         renderer.eyeX = (float) ((Math.cos(angle) * 4f));
-                        renderer.eyeY = 1f;
+                        //renderer.eyeY = 1f;
                         renderer.eyeZ = (float) ((Math.sin(angle) * 4f));
 
                         //renderer.eyeX += 0.1f;
                         //renderer.eyeZ -= 0.1f;
+
                         /*
                         Log.w("БОЛЬШЕ", "45 = ");
                         float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
@@ -211,7 +200,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                         forZ2 += 0.001f;
                         float angle = forZ2 * 2 * 3.1415926f;
                         renderer.eyeX = (float) ((Math.sin(angle) * 4f));
-                        renderer.eyeY = 1f;
+                        //renderer.eyeY = 1f;
                         renderer.eyeZ = (float) ((Math.cos(angle) * 4f));
 
                         /*
@@ -308,7 +297,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(5.0f, Math.min(mScaleFactor, 1500.0f));
+            mScaleFactor = Math.max(0.0f, Math.min(mScaleFactor, 1500.0f));
             renderer.eyeZ = mScaleFactor;
             flag = 0;
             return true;

@@ -201,38 +201,28 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
         float angle = time  *  2 * 3.1415926f;
         */
-
         // точка положения камеры
-
         //eyeX = 0;
         //eyeY = 0;
         //eyeZ = 4;
-
         /*
         eyeX = (float) (Math.cos(angle) * 4f);
         eyeY = 1f;
         eyeZ = (float) (Math.sin(angle) * 4f);
         */
-
         // точка направления камеры
-
         //centerX = 0;
         //centerY = 0;
         //centerZ = 0;
-
-
         // up-вектор трокать не нужно(наклоны и т.д)
         //upX = 0;
         //upY = 1;
         //upZ = 0;
-
         /**
          * eyeX, eyeY, eyeZ – координаты точки положения камеры, т.е. где находится камера
         centerX, centerY, centerZ – координаты точки направления камеры, т.е. куда камера смотрит
         upX, upY, upZ – координаты up-вектора, т.е. вектора, позволяющего задать поворот камеры вокруг оси «взгляда»
          */
-
-
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
     }
 
@@ -245,7 +235,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 arg0) {
-
         createViewMatrix();
         bindMatrix();
 
