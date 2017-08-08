@@ -153,7 +153,6 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 break;
             case MotionEvent.ACTION_MOVE:
                 /***
-                 *
                  /*
                  flag ++;
                  double radians = Math.atan(deltaY / deltaX);
@@ -257,8 +256,8 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 //  mode = degrees - mLastAngle;
                 //}
         //}
-        //А НАХУЯ, когда я могу просто задать градус поворота и нормально будет(навреное)
-        //Для теста, пробнем прикольно наверное полчится:D
+        //Могу просто задать градус поворота и нормально будет(навреное)
+        //Для теста, пробнем прикольно наверное полчится
         //Заменить TIME на что то другое, а именно на что то такое что не будет превышать 1 и не будет меньше 0, вот, так мы получим крутилку, по идее.
                 /*
                 float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
@@ -287,15 +286,20 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 //конвертим
                 degrees = (int) (radians * 180 / Math.PI);
                 if (flag >10) {
+                    Log.w("FLAG > 10", "degrees - mLastAngle = " +(degrees - mLastAngle));
                     if ((degrees - mLastAngle) > 45) {
-                        mode = -5;
-                    } else if ((degrees - mLastAngle) < -45) {
-                        mode = 5;
+                        Log.w("ASD", " > 45  =" +(degrees - mLastAngle));
+                        mode = -1;
+                        //renderer.angle -=  (float) ((Math.cos(mode) * 4f));
+                    } else if ((degrees - mLastAngle) < 45) {
+                        Log.w("ASD", " < -45 =" +(degrees - mLastAngle));
+                        mode = 1;
+                        //renderer.angle +=  (float) ((Math.cos(mode) * 4f));
                     } else {
                         mode = degrees - mLastAngle;
                     }
                 }
-                //renderer.spinRotate -= mode;
+                renderer.angle -= mode;
                 mLastAngle = degrees;
                 break;
         }
@@ -308,7 +312,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         public boolean onScale(ScaleGestureDetector detector) {
             mScaleFactor *= detector.getScaleFactor();
             mScaleFactor = Math.max(0.0f, Math.min(mScaleFactor, 1500.0f));
-            renderer.eyeZ = mScaleFactor;
+            renderer.eyeZ = -mScaleFactor;
             flag = 0;
             return true;
         }

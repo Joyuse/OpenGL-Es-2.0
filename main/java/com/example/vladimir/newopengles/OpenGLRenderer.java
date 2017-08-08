@@ -64,7 +64,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     //Угол поворота
     public float mAngle;
-
+    public float angle = 0;
 
     //проверка
     public float test;
@@ -196,23 +196,28 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     private void createViewMatrix() {
         //Для теста
+
         /*
         float time = (float)(SystemClock.uptimeMillis() % TIME) / TIME;
         float angle = time  *  2 * 3.1415926f;
         */
+
         // точка положения камеры
         //eyeX = 0;
         //eyeY = 0;
-        //eyeZ = 4;
+        //eyeZ =
+
         /*
         eyeX = (float) (Math.cos(angle) * 4f);
         eyeY = 1f;
         eyeZ = (float) (Math.sin(angle) * 4f);
         */
+
         // точка направления камеры
         //centerX = 0;
         //centerY = 0;
         //centerZ = 0;
+
         // up-вектор трокать не нужно(наклоны и т.д)
         //upX = 0;
         //upY = 1;
@@ -223,8 +228,28 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
          centerX, centerY, centerZ – координаты трочки направления камеры, т.е. куда камера смотрит
          upX, upY, upZ – координаты up-вектора, т.е. вектора, позволяющего задать поворот камеы вокруг оси «взгляда»
          */
-
+        /**
+        //Матрицы
+        //Матрица проекции
+        private float[] mProjectionMatrix = new float[16];
+        //Матрица камеры(вида)
+        private float[] mViewMatrix = new float[16];
+        //Итоговая матрица =  mProjectionMatrix * mViewMatrix
+        private float[] mMatrix = new float[16];
+         */
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+    }
+
+    private void setModelMatrix() {
+        Matrix.translateM(mViewMatrix, 0, 0, -0.5f, 0);
+        // В переменной angle угол будет меняться  от 0 до 360 каждые 10 секунд.
+
+        //float angle = -(float)(SystemClock.uptimeMillis() % TIME) / TIME * 360;
+
+        //void rotateM (float[] m,  int mOffset, float a,float x, float y, float z)
+        //Rotates matrix m in place by angle a (in degrees) around the axis (x, y, z).
+        Matrix.rotateM(mViewMatrix, 0, angle, 0, 0, 1);
+        Matrix.translateM(mViewMatrix, 0, -0.8f, 0, 0);
     }
 
     private void bindMatrix() {
@@ -236,8 +261,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 arg0) {
-        createViewMatrix();
-        bindMatrix();
+
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -265,6 +289,11 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         glUniform4f(uColorLocation, 1.0f, 0.5f, 0.0f, 1.0f);
         glDrawArrays(GL_LINES, 16, 2);
+
+
+        createViewMatrix();
+        setModelMatrix();
+        bindMatrix();
     }
 }
 

@@ -27,7 +27,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
     private ListView listView;
     private String [] drawerItems;
     private MyAdapter myAdapter;
-    OpenGLRenderer renderer;
+    OpenGLRenderer renderer,r;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,13 +116,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         }
     };
 
-    //Адаптера
+    //Адаптер
     class MyAdapter extends BaseAdapter {
-
         Context contex;
-
         String[] drawerItems;
-
         int[] drawerImages = {
                 R.drawable.ic_shortcut_location_city,
                 R.drawable.ic_shortcut_message,
