@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+    <item
+        android:id="@+id/home_id"
+        android:title="Home"
+        android:icon="@drawable/ic_shortcut_group"/>
+        <item
+            android:id="@+id/message"
+            android:title="Message"
+            android:icon="@drawable/ic_shortcut_message"/>
+        <item
+            android:id="@+id/favorites"
+            android:title="Home"
+            android:icon="@drawable/ic_shortcut_favorite"/>
+    </group>
+
+    <item android:title="Help">
+        <menu>
+            <item
+                android:id="@+id/city"
+                android:title="city"
+                android:icon="@drawable/ic_shortcut_location_city"/>
+            <item
+                android:id="@+id/swap"
+                android:title="swap"
+                android:icon="@drawable/ic_shortcut_swap_calls"/>
+            <item
+                android:id="@+id/nature"
+                android:title="nature"
+                android:icon="@drawable/ic_shortcut_nature"/>
+        </menu>
+    </item>
+</menu>

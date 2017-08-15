@@ -35,6 +35,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
     private float mLastTouchY;
     private int degrees;
 
+    private int DoWhat;
 
     //специально для углов
     float angle;
@@ -42,6 +43,9 @@ public class OpenGLSurfaceView extends GLSurfaceView {
     float forX2,forZ2;
     //незнаю зачем, но попробую
     float speedX,speedZ,speedX2,speedZ2;
+
+    //Для ошибки
+    String pizdec = " pizdec";
 
 
     public OpenGLSurfaceView(Context context, AttributeSet attrs) {
@@ -112,14 +116,15 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                     //Считываем разницу муежду касаниями движение
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
-//                    //Направление камеры
-//                    renderer.centerX += -dx / 256;
-//                    renderer.centerY += dy / 256;
-//                    //Координаты положения камеры
-//                    renderer.eyeX += -dx / 256;
-//                    renderer.eyeY += dy / 256;
 
-                    renderer.Move(dy / 256, dx / 256);
+//                    //Направление камеры
+                    renderer.centerX += -dx / 256;
+                    renderer.centerY += dy / 256;
+//                    //Координаты положения камеры
+                    renderer.eyeX += -dx / 256;
+                    renderer.eyeY += dy / 256;
+
+                    //renderer.Move(dy / 256, dx / 256);
                     //Посление касание
                     mLastTouchX = x;
                     mLastTouchY = y;
@@ -160,44 +165,42 @@ public class OpenGLSurfaceView extends GLSurfaceView {
                 //конвертим
                 degrees = (int) (radians * 180 / Math.PI);
                 if (flag >10) {
-                    //Log.w("FLAG > 10", "degrees - mLastAngle = " +(degrees - mLastAngle));
                     if ((degrees - mLastAngle) > 90) {
-                        Log.w("ASD", " > 45  =" +(degrees - mLastAngle));
-                        mode = -0.1f;
-                        //renderer.angle -=  (float) ((Math.cos(mode) * 4f));
-                    } else if ((degrees - mLastAngle) < -90) {
-                        Log.w("ASD", " < -45 =" +(degrees - mLastAngle));
-                        mode = 0.1f;
-                        //renderer.angle +=  (float) ((Math.cos(mode) * 4f));
-                    } else {
+                        angle = -1f;
+                        mode = -1f;
+                        Log.e("FLAG > 90 ", "degrees - mLastAngle = " +(degrees - mLastAngle));
+                    }
+                    else if ((degrees - mLastAngle) < -90) {
+                        angle = 1f;
+                        mode = 1f;
+                        Log.e("FLAG > -90 ", "degrees - mLastAngle = " +(degrees - mLastAngle));
+                    }
+                    //Тут происходит основной поворот
+                    else {
+                        Log.e("ELSE", "ПРОСТО ЕЛСЕ");
+                        DoWhat = 1;
                         mode = degrees - mLastAngle;
                     }
+                    //Log.e("ЛУЛ", "ВЫЗОВ ЗУМА");
+                    //mScaleDetector.onTouchEvent(event);
                 }
-//                renderer.angle -= mode;
-
-                renderer.Rotate(mode);
+                //renderer.Rotate(angle);
+                renderer.angle = mode;
                 mLastAngle = degrees;
-
                 break;
         }
         return true;
+
     }
 
     //Отдаляет по Z
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-
             mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(-1500.0f, Math.min(mScaleFactor, 1500.0f));
-
+            mScaleFactor = Math.max(2.0f, Math.min(mScaleFactor, 1500.0f));
             renderer.eyeZ = -mScaleFactor;
             renderer.centerZ = -mScaleFactor;
-            //renderer.centerY += 0.1f;
-            //renderer.eyeY += 0.1f;
-            //renderer.centerX -= 0.1f;
-            //renderer.eyeX -= 0.1f;
-
             flag = 0;
             return true;
         }

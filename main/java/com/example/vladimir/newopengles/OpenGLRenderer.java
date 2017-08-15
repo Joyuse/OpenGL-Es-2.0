@@ -1,46 +1,37 @@
 package com.example.vladimir.newopengles;
 
 import android.content.Context;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLSurfaceView.Renderer;
-import android.opengl.GLU;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
+import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
+import static android.opengl.GLES20.GL_DEPTH_TEST;
 import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
-import static android.opengl.GLES20.GL_LINES;
-import static android.opengl.GLES20.GL_TEXTURE_2D;
-import static android.opengl.GLES20.GL_TRIANGLE_STRIP;
+import static android.opengl.GLES20.GL_TRIANGLES;
 import static android.opengl.GLES20.GL_VERTEX_SHADER;
-import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glDrawArrays;
+import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glUniform4f;
+import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.glViewport;
-import static android.opengl.GLES20.glUniformMatrix4fv;
-import static android.opengl.GLES20.GL_TRIANGLES;
-import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
-import static android.opengl.GLES20.GL_DEPTH_TEST;
-import static android.opengl.GLES20.glEnable;
-import static android.opengl.GLES20.glLineWidth;
 
 public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
@@ -50,7 +41,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     private Context context;
 
     // точка положения камеры
-
     public float eyeX = 0;
     public float eyeY = 0;
     public float eyeZ = 10;
@@ -71,13 +61,14 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     //проверка
     public float test;
-
     //Буферы
     private FloatBuffer vertexData;
     private int uColorLocation;
     private int aPositionLocation;
     private int uMatrixLocation;
     private int programId;
+
+    private float x,y,z;
 
     //Матрицы
     //Матрица проекции
@@ -87,6 +78,23 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     //Итоговая матрица =  mProjectionMatrix * mViewMatrix
     private float[] mMatrix = new float[16];
 
+
+    //Шейдер фрагментный
+    String fragmentShader = "uniform vec4 u_Color;" +
+            "precision mediump float;" +
+            "void main()" +
+            "{" +
+            "gl_FragColor = u_Color;" +
+            "}";
+
+    //Шейдер вершинный
+    String vetrexShader = "attribute vec4 a_Position;" +
+            "uniform mat4 u_Matrix;" +
+            "void main()" +
+            "gl_Position = u_Matrix * a_Position;" +
+            "gl_PointSize = 5.0;" +
+            "}";
+
     public OpenGLRenderer(Context context) {
         this.context = context;
     }
@@ -95,10 +103,83 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         glClearColor(0f, 0f, 0f, 1f);
         glEnable(GL_DEPTH_TEST);
-        int vertexShaderId = ShaderUtils.createShader(context, GL_VERTEX_SHADER, R.raw.vertex_shader);
-        int fragmentShaderId = ShaderUtils.createShader(context, GL_FRAGMENT_SHADER, R.raw.fragment_shader);
-        programId = ShaderUtils.createProgram(vertexShaderId, fragmentShaderId);
-        glUseProgram(programId);
+
+
+
+
+        //int vertexShaderId = ShaderUtils.createShader(context, GL_VERTEX_SHADER, R.raw.vertex_shader);
+        //int fragmentShaderId = ShaderUtils.createShader(context, GL_FRAGMENT_SHADER, R.raw.fragment_shader);
+
+
+
+        //programId = ShaderUtils.createProgram(vertexShaderId, fragmentShaderId);
+        //glUseProgram(programId);
+
+
+        //Переопределили метод для загрузки шейдеров
+        int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
+        if (vertexShaderHandle != 0)
+        {
+            // Pass in the shader source.
+            GLES20.glShaderSource(vertexShaderHandle, vetrexShader);
+
+            // Compile the shader.
+            GLES20.glCompileShader(vertexShaderHandle);
+
+            // Get the compilation status.
+            final int[] compileStatus = new int[1];
+            GLES20.glGetShaderiv(vertexShaderHandle, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
+            if (compileStatus[0] == 0)
+            {
+                GLES20.glDeleteShader(vertexShaderHandle);
+                vertexShaderHandle = 0;
+            }
+        }
+        if (vertexShaderHandle == 0)
+        {
+            throw new RuntimeException("Error creating vertex shader.");
+        }
+
+        int programHandle = GLES20.glCreateProgram();
+        int fragmentShaderHandle = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);
+        if (programHandle != 0)
+        {
+            // Bind the vertex shader to the program.
+            GLES20.glAttachShader(programHandle, vertexShaderHandle);
+
+            // Bind the fragment shader to the program.
+            GLES20.glAttachShader(programHandle, fragmentShaderHandle);
+
+            // Bind attributes
+            GLES20.glBindAttribLocation(programHandle, 0, "a_Position");
+            GLES20.glBindAttribLocation(programHandle, 1, "a_Color");
+
+            // Link the two shaders together into a program.
+            GLES20.glLinkProgram(programHandle);
+
+            // Get the link status.
+            final int[] linkStatus = new int[1];
+            GLES20.glGetProgramiv(programHandle, GLES20.GL_LINK_STATUS, linkStatus, 0);
+
+            // If the link failed, delete the program.
+            if (linkStatus[0] == 0)
+            {
+                GLES20.glDeleteProgram(programHandle);
+                programHandle = 0;
+            }
+        }
+
+        if (programHandle == 0)
+        {
+            throw new RuntimeException("Error creating program.");
+        }
+
+        /*
+        if(vertexShaderId == 0) Log.e("vertextShaderId", "0");
+        if (fragmentShaderId == 0) Log.e("fragmentShaderId", "0");
+        if(programId == 0) Log.e("programm id"," = " + programId);
+        */
+
         //createViewMatrix();
         prepareData();
         bindData();
@@ -113,7 +194,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     private void prepareData()
     {
-
         float s = 0.4f;
         float d = 0.9f;
         float l = 3;
@@ -158,7 +238,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
                 0,1,0,
                 0,0,0,
 
-
                 0,0,1,
                 1,0,0,
                 0,0,0,
@@ -166,6 +245,10 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
                 0,1,0,
                 0,0,1,
                 0,0,0,
+
+                0,0,1,
+                1,0,0,
+                0,1,0,
 
         };
 
@@ -176,18 +259,33 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         vertexData.put(vertices);
     }
 
-    public void Move(float updn, float lr)
-    {
-        float dirX = (centerX - eyeX);
-        float dirY = (centerY - eyeY);
-        Matrix.translateM(mViewMatrix, 0, dirX*updn, dirY*updn, 0);
-        Matrix.translateM(mViewMatrix, 0, -dirY*lr, dirX*lr, 0);
-    }
+    //Движенгие
+//
+//    public void Move(float updn, float lr)
+//    {
+//        float dirX = (centerX - eyeX);
+//        Log.w("centerX", " ===== " +centerX);
+//        Log.w("eyeX", " ===== " +eyeX);
+//
+//        float dirY = (centerY - eyeY);
+//        Log.w("dirX", " ===== " +(centerX - eyeX));
+//        Log.w("dirY", " ===== " +(centerY - eyeY));
+//
+//        Log.w("updn", " ===== " +updn);
+//        Log.w("lr", " ===== " +lr);
+//
+//        Matrix.translateM(mViewMatrix, 0, dirX*updn, dirY*updn, 0);
+//        Matrix.translateM(mViewMatrix, 0, -dirY*lr, dirX*lr, 0);
+//    }
+//
 
-    public void Rotate(float angle)
-    {
-        Matrix.rotateM(mViewMatrix, 0, angle, 0, 0, 1);
-    }
+    //Повороты
+//
+//    public void Rotate(float angle)
+//    {
+//        Log.w("ANGLE", " =====" +angle);
+//        Matrix.rotateM(mViewMatrix, 0, angle, 0, 0, 1);
+//    }
 
     private void bindData() {
         // примитивы
@@ -196,14 +294,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         glVertexAttribPointer(aPositionLocation, POSITION_COUNT, GL_FLOAT,
                 false, 0, vertexData);
         glEnableVertexAttribArray(aPositionLocation);
-
         // цвет
         uColorLocation = glGetUniformLocation(programId, "u_Color");
-
         // матрица
         uMatrixLocation = glGetUniformLocation(programId, "u_Matrix");
     }
 
+    //Границы "дозволенного", дальность прорисовки 1500, так же для смены ориентации экрана
     private void createProjectionMatrix(int width, int height) {
         float ratio = 1;
         float left = -1;
@@ -221,27 +318,12 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
             bottom *= ratio;
             top *= ratio;
         }
-
         Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
+        //Отразили матрицу по Y
         Matrix.scaleM(mProjectionMatrix, 0, 1, -1, 1);
     }
 
     private void createViewMatrix() {
-        // точка положения камеры
-        //eyeX = 0;
-        //eyeY = 0;
-        //eyeZ = 4
-
-
-        // точка направления камеры
-        //centerX = 0;
-        //centerY = 0;
-        //centerZ = 0;
-
-        // up-вектор трокать не нужно(наклоны и т.д)
-        //upX = 0;
-        //upY = 1;
-        //upZ = 0;
 
         /**
          * eyeX, eyeY, eyeZ – координаты точки положения камеры, т.е. где находится камера
@@ -258,21 +340,23 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         private float[] mMatrix = new float[16];
          */
 
-        Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
-        //Matrix.setLookAtM(mViewMatrix, 0, 0, 0, eyeZ, 0, 0, 0, 0, upY, 0);
+        //Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, eyeZ, 0, 0, 0, 0, upY, 0);
     }
 
     private void setModelMatrix() {
         //Matrix.translateM(mViewMatrix, 0, 0, 0, 0);
-//        Matrix.translateM(mViewMatrix, 0,eyeX, eyeY, 0);
-//
-//        Matrix.rotateM(mViewMatrix, 0, angle, 0, 1, 0);
+       // Matrix.translateM(mViewMatrix,0, x, y, z);
+       // Matrix.rotateM(mViewMatrix, 0, angle, 0, 0, 1);
+       // Matrix.setRotateM(mViewMatrix,0,angle,0,0,1);k
 //        Matrix.translateM(mViewMatrix, 0, 0, 0, 0);
     }
 
     private void bindMatrix() {
         //Перемножаем матрицы
         createViewMatrix();
+
+        if(vertexData == null) Log.e("vertexData"," null");
 
         Matrix.multiplyMM(mMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
         //результат в mMatrix
@@ -296,6 +380,11 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 0.0f);
         glDrawArrays(GL_TRIANGLES, 6, 3);
+
+        /*
+        glUniform4f(uColorLocation, 0.0f, 1.0f, 1.0f, 0.0f);
+        glDrawArrays(GL_TRIANGLES, 9, 3);
+        */
 
         /*
         // треугольники
@@ -323,5 +412,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         glUniform4f(uColorLocation, 1.0f, 0.5f, 0.0f, 1.0f);
         glDrawArrays(GL_LINES, 16, 2);
         */
+    }
+
+    //Проверка на ошибки
+    public void checkGLError(String op) {
+        int error;
+        while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
+            Log.e("MyApp", op + ": glError " + error);
+        }
     }
 }
