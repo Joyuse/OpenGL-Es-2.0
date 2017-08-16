@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/contentFrame"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--
+        <android.opengl.GLSurfaceView
+            android:id="@+id/MyGLSurfaceViewID"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+            -->
+
+        <com.example.vladimir.sityinfov113.OpenGLSurfaceView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/OpenGLSurfaceViewID" />
+
+        <Button
+            android:id="@+id/ZoomIn"
+            android:layout_width="46dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center"
+            android:layout_marginTop="70dip"
+            android:background="@android:drawable/ic_input_add" />
+
+        <Button
+            android:id="@+id/ZoomOut"
+            android:layout_width="46dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center"
+            android:layout_marginTop="10dp"
+            android:background="@android:drawable/ic_delete" />
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/toolbar_layout"/>
+
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/NavigationView"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/navigation_header" />
+
+</android.support.v4.widget.DrawerLayout>
